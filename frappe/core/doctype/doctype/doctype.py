@@ -223,10 +223,11 @@ def validate_fields(fields):
 
 	def check_dynamic_link_options(d):
 		if d.fieldtype=="Dynamic Link":
-			doctype_pointer = filter(lambda df: df.fieldname==d.options, fields)
-			if not doctype_pointer or (doctype_pointer[0].fieldtype!="Link") \
-				or (doctype_pointer[0].options!="DocType"):
-				frappe.throw(_("Options 'Dynamic Link' type of field must point to another Link Field with options as 'DocType'"))
+			__options =  d.options.split(',')[1]
+			doctype_pointer = filter(lambda df: df.fieldname==__options, fields)
+			if not doctype_pointer or (doctype_pointer[0].fieldtype!="Link"): #\
+				#or (doctype_pointer[0].options!="DocType"):
+				frappe.throw(_("Options 'Dynamic Link' type of field must point to another Link Field."))
 
 	def check_fold(fields):
 		fold_exists = False

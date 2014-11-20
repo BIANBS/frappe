@@ -814,6 +814,7 @@ frappe.ui.form.ControlLink = frappe.ui.form.ControlData.extend({
 	},
 	get_options: function() {
 		return this.df.options;
+		
 	},
 	setup_buttons: function() {
 		var me = this;
@@ -839,7 +840,9 @@ frappe.ui.form.ControlLink = frappe.ui.form.ControlData.extend({
 		// new
 		if(this.df.fieldtype==="Dynamic Link" || frappe.model.can_create(me.df.options)) {
 			this.$input_area.find(".btn-new").on("click", function() {
-				var doctype = me.get_options();
+				var options = me.get_options().split(",");
+				var doctype = options[0];
+
 				if(!doctype) return;
 				me.frm.new_doc(doctype, me);
 			});
@@ -869,6 +872,13 @@ frappe.ui.form.ControlLink = frappe.ui.form.ControlData.extend({
 			minLength: 0,
 			source: function(request, response) {
 				var doctype = me.get_options();
+
+				if (typeof(doctype) == 'string') {
+					doctype = doctype;
+				} else if (typeof(doctype) == 'object') {
+					doctype = doctype[0];
+				}
+
 				if(!doctype) return;
 				if (!me.$input.cache[doctype]) {
 					me.$input.cache[doctype] = {};
@@ -994,10 +1004,11 @@ frappe.ui.form.ControlLink = frappe.ui.form.ControlData.extend({
 
 frappe.ui.form.ControlDynamicLink = frappe.ui.form.ControlLink.extend({
 	get_options: function() {
-		var options = frappe.model.get_value(this.df.parent, this.docname, this.df.options);
-		if(!options) {
+		var options =  this.df.options.split(",");
+		var field_name = frappe.model.get_value(this.df.parent, this.docname, options[1]);
+		if(!field_name) {
 			msgprint(__("Please set {0} first",
-				[frappe.meta.get_docfield(this.df.parent, this.df.options, this.docname).label]));
+				[frappe.meta.get_docfield(this.df.parent, field_name , this.docname).label]));
 		}
 		return options;
 	},
