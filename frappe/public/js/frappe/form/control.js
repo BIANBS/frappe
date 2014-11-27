@@ -874,12 +874,6 @@ frappe.ui.form.ControlLink = frappe.ui.form.ControlData.extend({
 			source: function(request, response) {
 				var doctype = me.get_options();
 
-				// if (typeof(doctype) == 'string') {
-				// 	doctype = doctype;
-				// } else if (typeof(doctype) == 'object') {
-				// 	doctype = doctype[0];
-				// }
-
 				if(!doctype) return;
 				if (!me.$input.cache[doctype]) {
 					me.$input.cache[doctype] = {};
@@ -942,6 +936,11 @@ frappe.ui.form.ControlLink = frappe.ui.form.ControlData.extend({
 				if(me.frm && me.frm.doc) {
 					me.selected = true;
 					me.parse_validate_and_set_in_model(ui.item.value);
+					var $wrap = $(cur_frm.fields_dict.offer_html.disp_area);
+					if($wrap) {
+						$('<label class="control-label small col-xs-4" style="padding-right: 0px;">'+ui.item.value+'</label>'+
+					  	  '<div class="col-xs-8" style="text-align: center;"><input type="text" class="frappe-control" style="text-align: right;"></div>').appendTo($wrap);
+					}
 				} else {
 					me.$input.val(ui.item.value);
 					me.$input.trigger("change");
